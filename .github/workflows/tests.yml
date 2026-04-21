@@ -36,7 +36,7 @@ jobs:
         run: python -m pytest tests/ -v --tb=short
 
       - name: Run analyze smoke test
-        run: python cli.py analyze --steps 100 --no-save-json
+        run: python3 cli.py analyze --steps 100 --no-save-json
         # Verifies the full pipeline runs without error.
         # The verdict (ADAPTIVE_RECOMMENDED, etc.) is parameter-dependent
         # and is not a CI pass/fail gate.

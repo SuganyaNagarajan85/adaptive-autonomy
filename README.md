@@ -47,7 +47,7 @@ cd adaptive-autonomy
 pip install -r requirements.txt
 
 # Full cross-scenario analysis with optimization report
-python cli.py analyze
+python3 cli.py analyze
 ```
 
 **Expected output:**
@@ -155,9 +155,9 @@ These aren't synthetic edge cases — they map directly to production failure mo
 Run any scenario:
 
 ```bash
-python cli.py scenario flash_sale
-python cli.py scenario degradation --steps 600
-python cli.py scenario recovery --seed 99
+python3 cli.py scenario flash_sale
+python3 cli.py scenario degradation --steps 600
+python3 cli.py scenario recovery --seed 99
 ```
 
 ---
@@ -247,7 +247,7 @@ result = runner.run_scenario(scenario)
 pip install -r requirements.txt
 
 # Run all 42 tests
-python -m pytest tests/ -v
+python3 -m pytest tests/ -v
 
 # Start REST API
 uvicorn api.main:app --reload --port 8000
@@ -298,6 +298,8 @@ boundary_update:
 
 **Rule**: β >> α always. A ratio of 10×–15× is a safe production starting point.
 
+`config/ecommerce.yaml` provides a ready-made override for high-throughput retail: more sensitive spike detection (`spike_growth_threshold: 1.4`), faster contraction (`beta: 0.40`), larger window (`window_size: 100`), and per-decision-class boundary caps for fraud, pricing, and recommendations.
+
 ---
 
 ## Extending the System
@@ -308,16 +310,6 @@ boundary_update:
 - **Kafka integration**: replace `FeedbackCollector` with a Kafka consumer implementation
 - **Custom scenarios**: call `ScenarioConfig(...)` directly or add a factory to `scenarios.py`
 - **Pattern replay**: call `ProductionSimulator.full_series()` to export and replay recorded signals
-
----
-
-## Suggested Repo Names
-
-| Name | Positioning |
-|---|---|
-| `adaptive-autonomy` | Clear, searchable, domain-agnostic |
-| `autonomy-controller` | Emphasises the control-plane role |
-| `safe-autonomy-loop` | Leads with safety — relevant for AI governance audiences |
 
 ---
 

@@ -22,7 +22,9 @@ logs/
 *.jsonl
 *.cast
 
-# Assets — commit GIF/MP4 if you want them in the README, otherwise ignore
+# Assets — GIF/MP4 are committed for the README demo.
+# To re-record: git rm --cached assets/demo.gif assets/demo.mp4 first,
+# then run: vhs demo.tape  (requires: brew install vhs ttyd)
 # assets/demo.gif
 # assets/demo.mp4
 

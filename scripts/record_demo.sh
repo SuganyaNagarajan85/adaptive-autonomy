@@ -44,7 +44,7 @@ if [ "$MODE" = "--svg" ]; then
     fi
     echo "Recording with asciinema..."
     asciinema rec assets/demo.cast \
-        --command "/opt/homebrew/opt/python@3.11/bin/python3.11 demo.py --fast" \
+        --command "python3 demo.py --fast" \
         --title "Autonomy Learning Loop" \
         --overwrite
     echo "Converting to SVG..."
