@@ -1,6 +1,6 @@
 # Autonomy Learning Loop (ALL)
 
-[![Tests](https://github.com/your-org/autonomy-learning-loop/actions/workflows/tests.yml/badge.svg)](https://github.com/your-org/autonomy-learning-loop/actions/workflows/tests.yml)
+[![Tests](https://github.com/SuganyaNagarajan85/adaptive-autonomy/actions/workflows/tests.yml/badge.svg)](https://github.com/SuganyaNagarajan85/adaptive-autonomy/actions/workflows/tests.yml)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
@@ -42,8 +42,8 @@ Autonomous success rate: **94–96%** — statistically identical to static. The
 ## Run in 60 Seconds
 
 ```bash
-git clone https://github.com/your-org/autonomy-learning-loop
-cd autonomy-learning-loop
+git clone https://github.com/SuganyaNagarajan85/adaptive-autonomy
+cd adaptive-autonomy
 pip install -r requirements.txt
 
 # Full cross-scenario analysis with optimization report

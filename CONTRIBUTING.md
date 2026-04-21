@@ -23,7 +23,7 @@ Thank you for your interest in contributing. This document covers how to get sta
 ## Setup
 
 ```bash
-git clone https://github.com/your-org/autonomy-learning-loop
+git clone https://github.com/SuganyaNagarajan85/adaptive-autonomy
 cd autonomy-learning-loop
 pip install -r requirements.txt
 
