@@ -1,0 +1,50 @@
+system:
+  name: "feedback-driven-autonomy"
+  version: "1.0.0"
+  mode: "adaptive"          # adaptive | static
+  log_level: "INFO"
+
+autonomy:
+  initial_boundary: 0.5     # B_0 — starting autonomy score per decision class
+  min_boundary: 0.05        # floor — always keep some human oversight
+  max_boundary: 0.95        # ceiling — never fully remove human oversight
+
+boundary_update:
+  alpha: 0.025              # slow expansion rate (ΔB = α(1−B))
+  beta: 0.38                # fast contraction rate (ΔB = −βB), β >> α
+  safe_threshold: 0.15      # S_t < safe_threshold  → expand autonomy (lower = trend detector fires earlier)
+  risk_threshold: 0.60      # S_t >= risk_threshold → contract autonomy
+  min_update_interval_seconds: 60   # rate-limit: min gap between boundary updates
+  window_size: 35           # decisions aggregated per evaluation window
+  headroom_buffer: 0.35     # reserved gap below max_boundary; expansion tapers inside this zone
+  spike_growth_threshold: 1.5     # S_t must grow by this ratio per window to count as a spike
+  spike_consecutive_windows: 2    # how many consecutive growing windows before circuit breaker fires
+  spike_conservative_boundary: 0.15   # B is set to this immediately when circuit breaker fires
+  spike_recovery_lock_windows: 10 # windows post-trigger where expansion is blocked (raised for sustained-safety)
+  sustained_safe_windows: 3       # consecutive safe windows (S_t < safe_threshold) required to exit CB lock
+  spike_trend_window_count: 4     # S_t history length for slow-trend slope computation
+  spike_trend_slope_threshold: 0.02  # minimum S_t slope/window to flag as upward trend
+
+feedback:
+  async_queue_size: 10000   # max buffered signals before back-pressure
+  signal_weights:           # contribution of each signal type to S_t
+    ROLLBACK: 0.35
+    OVERRIDE: 0.25
+    INCIDENT: 0.30
+    TRUST_DEGRADATION: 0.05
+    CONFIDENCE_DIVERGENCE: 0.05
+
+simulation:
+  total_steps: 500          # number of evaluation windows
+  decisions_per_step: 20    # traffic volume per window
+  base_failure_rate: 0.08   # baseline P(failure) for auto decisions
+  anomaly_probability: 0.05 # per-step probability of entering anomaly period
+  anomaly_duration_steps: 10
+  peak_multiplier: 3.5      # risk amplification during flash-sale anomalies
+  seed: 42
+
+governance:
+  shadow_mode_enabled: false
+  human_review_queue_capacity: 200
+  review_sla_seconds: 300
+  audit_log_path: "logs/audit.jsonl"

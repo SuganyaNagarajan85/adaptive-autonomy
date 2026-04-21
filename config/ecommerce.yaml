@@ -1,0 +1,73 @@
+# E-commerce specific config — inherits defaults and overrides for high-throughput retail context
+system:
+  name: "ecommerce-autonomy-loop"
+  version: "1.0.0"
+  mode: "adaptive"
+  log_level: "INFO"
+
+autonomy:
+  initial_boundary: 0.4     # conservative start — ecommerce has revenue impact
+  min_boundary: 0.05
+  max_boundary: 0.90        # cap lower — fraud/pricing needs more oversight
+
+boundary_update:
+  alpha: 0.03               # slower expansion — revenue risk warrants caution
+  beta: 0.40                # faster contraction — protect revenue quickly
+  safe_threshold: 0.20
+  risk_threshold: 0.55
+  min_update_interval_seconds: 120  # 2-min cooldown to avoid flash-sale oscillation
+  window_size: 100          # larger window — smooth out flash-sale noise
+  headroom_buffer: 0.20     # larger buffer for ecommerce — spike events need more contraction room
+  spike_growth_threshold: 1.4     # more sensitive — ecommerce spikes are revenue-critical
+  spike_consecutive_windows: 2    # fire after 2 consistent growth windows
+  spike_conservative_boundary: 0.10   # more conservative for revenue-critical spike handling
+  spike_recovery_lock_windows: 8  # longer lock — don't re-expand until spike fully clears
+  sustained_safe_windows: 4       # ecommerce: require 4 consecutive safe windows post-CB
+  spike_trend_window_count: 4     # S_t history length for slow-trend slope computation
+  spike_trend_slope_threshold: 0.015  # more sensitive — ecommerce gradual degradation is revenue-critical
+
+feedback:
+  async_queue_size: 50000   # high-throughput retail
+  signal_weights:
+    ROLLBACK: 0.30
+    OVERRIDE: 0.20
+    INCIDENT: 0.35           # incidents weigh more — customer-facing impact
+    TRUST_DEGRADATION: 0.10  # cart abandonment / opt-outs critical signal
+    CONFIDENCE_DIVERGENCE: 0.05
+
+simulation:
+  total_steps: 600
+  decisions_per_step: 50    # peak retail TPS approximation per step
+  base_failure_rate: 0.06
+  anomaly_probability: 0.08  # flash sales happen often
+  anomaly_duration_steps: 15 # flash sale lasts ~15 windows
+  peak_multiplier: 4.0       # Black Friday-level risk spike
+  seed: 7
+
+governance:
+  shadow_mode_enabled: true  # always shadow in ecommerce — compare live vs human
+  human_review_queue_capacity: 500
+  review_sla_seconds: 120    # tight SLA for offer/fraud decisions
+  audit_log_path: "logs/ecommerce_audit.jsonl"
+
+# Decision-class-specific boundary overrides
+decision_class_overrides:
+  FRAUD_DETECTION:
+    initial_boundary: 0.30   # fraud always starts conservative
+    max_boundary: 0.75
+    beta: 0.50               # very fast contraction on fraud signals
+  PRICING:
+    initial_boundary: 0.45
+    max_boundary: 0.85
+  PRODUCT_RECOMMENDATION:
+    initial_boundary: 0.60   # recommendations can be more aggressive
+    max_boundary: 0.95
+  OFFER_SELECTION:
+    initial_boundary: 0.40
+    max_boundary: 0.85
+  NOTIFICATION:
+    initial_boundary: 0.55
+    max_boundary: 0.90
+  SEARCH_RANKING:
+    initial_boundary: 0.65
+    max_boundary: 0.95
